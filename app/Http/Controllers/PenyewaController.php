@@ -4,52 +4,70 @@ namespace App\Http\Controllers;
 
 use App\Models\Penyewa;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class PenyewaController extends Controller
 {
-    //tampilan
-    public function index() {
-        $penyewa = Penyewa::all();
-        return view('penyewa.index', compact('penyewa'));
+    public function index()
+    {
+        $penyewas = Penyewa::all();
+        return view('penyewa.index', compact('penyewas'));
     }
 
-    //untuk menambahkan
-    public function create (){
+    public function create()
+    {
         return view('penyewa.create');
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
-            'nama_penyewa' => 'required|string|max:100',
-            'alamat' => 'required|string',
-            'no_hp' => 'required|string|max:15',
+            'nama_penyewa' => 'required|max:100',
+            'alamat' => 'required',
+            'no_hp' => 'required|max:15',
         ]);
+
         Penyewa::create($request->all());
-        return redirect()->route('penyewa.index')->with('success', 'penyewa created succesfully');
+
+        // Menggunakan SweetAlert untuk notifikasi
+        Alert::success('Success', 'Penyewa berhasil ditambahkan');
+
+        return redirect()->route('penyewa.index');
     }
 
-    //untuk mengedit
+    public function show(Penyewa $penyewa)
+    {
+        return view('penyewa.show', compact('penyewa'));
+    }
 
-    public function edit (Penyewa $penyewa ){
+    public function edit(Penyewa $penyewa)
+    {
         return view('penyewa.edit', compact('penyewa'));
     }
 
-    public function update(Request $request, $id_penyewa) {
+    public function update(Request $request, Penyewa $penyewa)
+    {
         $request->validate([
-            'nama_penyewa',
-            'alamat',
-            'no_hp',
+            'nama_penyewa' => 'required|max:100',
+            'alamat' => 'required',
+            'no_hp' => 'required|max:15',
         ]);
-        
-        $penyewa = Penyewa::findOrFail($id_penyewa);
+
         $penyewa->update($request->all());
-        return redirect()->route('penyewa.index')->with('success', 'penyewa update succesfully');
+
+        // Menggunakan SweetAlert untuk notifikasi
+        Alert::success('Success', 'Penyewa berhasil diupdate');
+
+        return redirect()->route('penyewa.index');
     }
-    
-    // untuk menghapus
-    public function destroy($id_penyewa) {
-        $penyewa = Penyewa::findOrFail($id_penyewa);
+
+    public function destroy(Penyewa $penyewa)
+    {
         $penyewa->delete();
-        return redirect()->route('penyewa.index')->with('success', 'penyewa deleted successfully.');
+
+        // Menggunakan SweetAlert untuk notifikasi
+        Alert::success('Success', 'Penyewa berhasil dihapus');
+
+        return redirect()->route('penyewa.index');
     }
 }

@@ -11,16 +11,24 @@ class Kendaraan extends Model
 
     protected $table = 'kendaraan';
     protected $primaryKey = 'no_pol';
-    protected $fillable =[
+    public $incrementing = false;
+
+    protected $fillable = [
         'no_pol',
         'no_mesin',
         'jenis_mobil',
         'nama_mobil',
         'merek',
         'kapasitas',
-        'tarif',
     ];
 
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public function sewa()
+    {
+        return $this->hasMany(Sewa::class, 'no_pol');
+    }
+
+    public function invoice()
+    {
+        return $this->hasMany(Invoice::class, 'no_pol');
+    }
 }
